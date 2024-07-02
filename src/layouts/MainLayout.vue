@@ -50,6 +50,12 @@ const linksList = [
     icon: "face_3",
     link: "/artists",
   },
+  {
+    title: "Albums",
+    caption: "Explore our albums",
+    icon: "library_music",
+    link: "/albums",
+  },
 ];
 
 const leftDrawerOpen = ref(false);

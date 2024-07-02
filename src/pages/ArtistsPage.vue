@@ -20,76 +20,35 @@
             <q-icon name="chevron_right" />
           </q-item-section>
         </q-item>
-
-        <AddItem clickable @mousedown="addArtistModal = true" />
       </q-list>
 
       <q-pagination
         v-if="artists.length"
         v-model="currentPage"
         direction-links
+        :max-pages="6"
         :max="paginationItems"
       />
-
-      <!-- dialogs -->
-      <q-dialog v-model="addArtistModal">
-        <q-card style="max-width: 400px; width: 100%">
-          <q-card-section class="row items-center q-pb-none">
-            <div class="text-h6">Close icon</div>
-            <q-space />
-            <q-btn icon="close" flat round dense v-close-popup />
-          </q-card-section>
-
-          <q-card-section>
-            <q-form class="q-gutter-md" autofocus @submit="onSubmit">
-              <q-input
-                filled
-                v-model="artistNameField"
-                label="Artist name"
-                hint="Name should be unique"
-              />
-
-              <q-btn label="Submit" type="create" color="primary" />
-            </q-form>
-          </q-card-section>
-        </q-card>
-      </q-dialog>
     </div>
   </q-page>
 </template>
 
 <script setup>
+import { useQuasar } from "quasar";
 import { ref, computed } from "vue";
-import { useCounterStore } from "stores/artists";
-import AddItem from "components/AddItem.vue";
 
 defineOptions({
   name: "ArtistsPage",
 });
 
-const artistsStore = useCounterStore();
-const artists = computed(() => artistsStore.artistsList);
+const $q = useQuasar();
 
-const addArtistModal = ref(false);
-const artistNameField = ref(null);
+const artists = $q.localStorage.getItem("artists");
 
 const pageSize = 10;
 const currentPage = ref(1);
-const paginationItems = computed(() =>
-  Math.ceil(artists.value.length / pageSize)
-);
+const paginationItems = computed(() => Math.ceil(artists.length / pageSize));
 const shownArtists = computed(() =>
-  artists.value.slice(
-    pageSize * currentPage.value - 10,
-    currentPage.value * pageSize
-  )
+  artists.slice(pageSize * currentPage.value - 10, currentPage.value * pageSize)
 );
-
-const onSubmit = () => {
-  const result = artistsStore.addArtist(artistNameField.value);
-  if (result == "success") {
-    artistNameField.value = null;
-    addArtistModal.value = false;
-  }
-};
 </script>
